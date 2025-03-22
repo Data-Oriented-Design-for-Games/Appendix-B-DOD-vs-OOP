@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using Unity.IL2CPP.CompilerServices;
 
 namespace Survivor
 {
@@ -75,7 +76,7 @@ namespace Survivor
 
             for (int i = 0; i < balance.MaxEnemies; i++)
             {
-                m_enemyPoolOOP[i].Init(gameData.BoardBounds, gameData.EnemyPosition[i], gameData.EnemyDirection[i], gameData.EnemyVelocity[i]);
+                m_enemyPoolOOP[i].Init(gameData.BoardBounds, gameData.EnemyPosition[i], gameData.EnemyDirection[i], balance.EnemyVelocity);
                 m_enemyPoolOOP[i].gameObject.SetActive(i < gameData.EnemyCount);
             }
 

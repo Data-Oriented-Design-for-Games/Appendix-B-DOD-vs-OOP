@@ -2,6 +2,7 @@ using UnityEngine;
 using CommonTools;
 using System.Collections.Generic;
 using TMPro;
+using Unity.IL2CPP.CompilerServices;
 
 namespace Survivor
 {
@@ -12,8 +13,6 @@ namespace Survivor
 
         public GameObject UIMainMenu;
         public GameObject UIGameOver;
-
-        public TextMeshProUGUI TestResults;
 
         GameData m_gameData = new GameData();
         public Balance m_balance;

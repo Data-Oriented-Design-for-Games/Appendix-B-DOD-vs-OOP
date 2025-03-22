@@ -4,28 +4,24 @@ using UnityEngine;
 
 namespace Survivor
 {
-        public enum MENU_STATE { NONE, IN_GAME, GAME_OVER };
+public enum MENU_STATE { NONE, IN_GAME, GAME_OVER };
 
-        [Serializable]
-        public class GameData
-        {
-                public int EnemyCount;
-                public int EnemyCountGood;
-                public int SpawnRate;
-                public int SpawnFrameCount;
+[Serializable]
+public class GameData
+{
+        public int EnemyCount;
+        public int EnemyCountGood;
+        public int SpawnRate;
+        public int SpawnFrameCount;
 
-                public float[] AverageDT;
-                public int AverageDTCount;
+        public float[] AverageDT;
+        public int AverageDTCount;
 
-                public Vector2[] EnemyPosition;
-                public Vector2[] EnemyDirection;
-                public float[] EnemyVelocity;
+        public Vector2[] EnemyPosition;
+        public Vector2[] EnemyDirection;
 
-                public Vector2 BoardBounds;
+        public Vector2 BoardBounds;
 
-                public float GameTime;
-                public float BestTime;
-
-                public MENU_STATE GameState = MENU_STATE.NONE;
-        }
+        public MENU_STATE GameState = MENU_STATE.NONE;
+}
 }

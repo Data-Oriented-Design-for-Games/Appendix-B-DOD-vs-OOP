@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using Unity.IL2CPP.CompilerServices;
 
 namespace Survivor
 {
@@ -10,7 +11,6 @@ namespace Survivor
         {
             gameData.EnemyPosition = new Vector2[balance.MaxEnemies];
             gameData.EnemyDirection = new Vector2[balance.MaxEnemies];
-            gameData.EnemyVelocity = new float[balance.MaxEnemies];
 
             gameData.AverageDT = new float[10000];
         }
@@ -40,69 +40,63 @@ namespace Survivor
                     Random.value - 0.5f,
                     Random.value - 0.5f
                     ).normalized;
-
-                gameData.EnemyVelocity[i] = (
-                    Random.value *
-                    (balance.EnemyVelocityMax - balance.EnemyVelocityMin)) +
-                    balance.EnemyVelocityMin;
             }
 
-            gameData.GameTime = 0.0f;
             gameData.AverageDTCount = 0;
         }
 
-        public static void TryChangeEnemyCount(GameData gameData, Balance balance, float dt, out int oldEnemyCount)
+public static void TryChangeEnemyCount(GameData gameData, Balance balance, float dt, out int oldEnemyCount)
+{
+    oldEnemyCount = gameData.EnemyCount;
+
+    if (gameData.SpawnFrameCount > 0)
+    {
+        gameData.AverageDT[gameData.AverageDTCount++] = dt;
+    }
+    gameData.SpawnFrameCount--;
+    if (gameData.SpawnFrameCount <= 0)
+    {
+        float avgDT = 0.0f;
+        for (int i = 0; i < gameData.AverageDTCount; i++)
+            avgDT += gameData.AverageDT[i];
+        avgDT /= (float)gameData.AverageDTCount;
+
+        float avgFPS = 1.0f / avgDT;
+
+        gameData.AverageDTCount = 0;
+
+        if (avgFPS >= 59.0f || gameData.EnemyCount == 1)
         {
-            oldEnemyCount = gameData.EnemyCount;
+            gameData.EnemyCountGood = gameData.EnemyCount;
 
-            if (gameData.SpawnFrameCount > 0)
-            {
-                gameData.AverageDT[gameData.AverageDTCount++] = dt;
-            }
-            gameData.SpawnFrameCount--;
-            if (gameData.SpawnFrameCount <= 0)
-            {
-                float avgDT = 0.0f;
-                for (int i = 0; i < gameData.AverageDTCount; i++)
-                    avgDT += gameData.AverageDT[i];
-                avgDT /= (float)gameData.AverageDTCount;
+            // increase enemy count
+            gameData.SpawnRate *= 2;
 
-                float avgFPS = 1.0f / avgDT;
+            gameData.EnemyCount += gameData.SpawnRate;
+            if (gameData.EnemyCount > balance.MaxEnemies)
+                gameData.EnemyCount = balance.MaxEnemies;
 
-                gameData.AverageDTCount = 0;
-
-                if (avgFPS >= 59.0f || gameData.EnemyCount == 1)
-                {
-                    gameData.EnemyCountGood = gameData.EnemyCount;
-
-                    // increase enemy count
-                    gameData.SpawnRate *= 2;
-
-                    gameData.EnemyCount += gameData.SpawnRate;
-                    if (gameData.EnemyCount > balance.MaxEnemies)
-                        gameData.EnemyCount = balance.MaxEnemies;
-
-                    gameData.SpawnFrameCount = balance.SpawnFrameCount;
-                }
-                else if (gameData.EnemyCount == gameData.EnemyCountGood && gameData.EnemyCount > 1)
-                {
-                    gameData.EnemyCount--;
-                    gameData.EnemyCountGood--;
-                    gameData.SpawnRate = 1;
-
-                    gameData.SpawnFrameCount = balance.SpawnFrameCount * 2;
-                }
-                else
-                {
-                    // go to last good enemy count
-
-                    gameData.SpawnRate = 1;
-                    gameData.EnemyCount = gameData.EnemyCountGood;
-
-                    gameData.SpawnFrameCount = balance.SpawnFrameCount * 2;
-                }
-            }
+            gameData.SpawnFrameCount = balance.SpawnFrameCount;
         }
+        else if (gameData.EnemyCount == gameData.EnemyCountGood && gameData.EnemyCount > 1)
+        {
+            gameData.EnemyCount--;
+            gameData.EnemyCountGood--;
+            gameData.SpawnRate = 1;
+
+            gameData.SpawnFrameCount = balance.SpawnFrameCount * 2;
+        }
+        else
+        {
+            // go to last good enemy count
+
+            gameData.SpawnRate = 1;
+            gameData.EnemyCount = gameData.EnemyCountGood;
+
+            gameData.SpawnFrameCount = balance.SpawnFrameCount * 2;
+        }
+    }
+}
 
         public static void TickDOD(GameData gameData, Balance balance, float dt)
         {
@@ -110,7 +104,7 @@ namespace Survivor
             {
                 Vector2 position = gameData.EnemyPosition[i] +
                 gameData.EnemyDirection[i] *
-                gameData.EnemyVelocity[i] * dt;
+                balance.EnemyVelocity * dt;
                 Vector2 direction = gameData.EnemyDirection[i];
 
                 CheckEnemyWallCollision(gameData.BoardBounds, ref position, ref direction);
@@ -120,8 +114,6 @@ namespace Survivor
             }
 
             CheckEnemyEnemyCollisionDOD(gameData, balance);
-
-            gameData.GameTime += dt;
         }
 
         public static void CheckEnemyEnemyCollisionDOD(GameData gameData, Balance balance)
@@ -139,10 +131,6 @@ namespace Survivor
 
                         gameData.EnemyDirection[i] = (gameData.EnemyPosition[i] - midPoint).normalized;
                         gameData.EnemyDirection[j] = (gameData.EnemyPosition[j] - midPoint).normalized;
-
-                        float velocity = gameData.EnemyVelocity[i];
-                        gameData.EnemyVelocity[i] = gameData.EnemyVelocity[j];
-                        gameData.EnemyVelocity[j] = velocity;
                     }
                 }
 
