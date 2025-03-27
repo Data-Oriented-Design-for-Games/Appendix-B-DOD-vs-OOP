@@ -2064,12 +2064,10 @@ MonoBehaviour:
   UIGameOver: {fileID: 1125711231}
   m_balance:
     MaxEnemies: 50000
-    EnemyVelocityMin: 0.5
-    EnemyVelocityMax: 3
-    PlayerVelocity: 1.5
+    EnemyVelocity: 3
     MinCollisionDistance: 0.1
     Diameter: 0.06
-    SpawnFrameCount: 60
+    SpawnFrameCount: 120
   DOD: 1
 --- !u!4 &1695226660
 Transform:
