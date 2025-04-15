@@ -955,8 +955,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1f3ffef31e0734aa7b3991a48b36b64f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  EnemyPrefab: {fileID: 7772979827908344955, guid: 3ccd6d6c905484347b8617520424db03, type: 3}
-  EnemyParent: {fileID: 229309898}
+  EnemyPrefabDOD: {fileID: 7772979827908344955, guid: 3ccd6d6c905484347b8617520424db03, type: 3}
+  EnemyParentDOD: {fileID: 229309898}
   EnemyPrefabOOP: {fileID: 7772979827908344955, guid: 65b3da534b1df42aeb12d336d7c54951, type: 3}
   EnemyParentOOP: {fileID: 1929046903}
   UI: {fileID: 713438659}

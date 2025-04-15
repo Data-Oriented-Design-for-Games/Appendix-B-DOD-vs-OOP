@@ -8,7 +8,6 @@ namespace Survivor
 {
     public class EnemyOOP : MonoBehaviour
     {
-        // Vector2 m_position;
         public Vector2 Direction;
         public float Velocity;
         Vector2 m_boardBounds;
@@ -16,7 +15,6 @@ namespace Survivor
         public void Init(Vector2 boardBounds, Vector2 position, Vector2 direction, float velocity)
         {
             m_boardBounds = boardBounds;
-            // m_position = position;
             transform.localPosition = position;
             Direction = direction;
             Velocity = velocity;
@@ -44,10 +42,6 @@ namespace Survivor
 
                 Direction = (transform.localPosition - midPoint).normalized;
                 enemyOOP.Direction = (enemyOOP.transform.localPosition - midPoint).normalized;
-
-                float velocity = Velocity;
-                Velocity = enemyOOP.Velocity;
-                enemyOOP.Velocity = velocity;
             }
 
         }

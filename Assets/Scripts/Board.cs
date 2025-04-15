@@ -9,10 +9,10 @@ namespace Survivor
 {
     public class Board : MonoBehaviour
     {
-        public GameObject EnemyPrefab;
-        public Transform EnemyParent;
-        GameObject[] m_enemyPool;
-        bool[] m_enemyActive;
+        public GameObject EnemyPrefabDOD;
+        public Transform EnemyParentDOD;
+        GameObject[] m_enemyPoolDOD;
+        bool[] m_enemyActiveDOD;
 
         public GameObject EnemyPrefabOOP;
         public Transform EnemyParentOOP;
@@ -24,13 +24,13 @@ namespace Survivor
         // Start is called before the first frame update
         public void Init(Balance balance)
         {
-            m_enemyActive = new bool[balance.MaxEnemies];
-            m_enemyPool = new GameObject[balance.MaxEnemies];
+            m_enemyActiveDOD = new bool[balance.MaxEnemies];
+            m_enemyPoolDOD = new GameObject[balance.MaxEnemies];
             for (int i = 0; i < balance.MaxEnemies; i++)
             {
-                m_enemyPool[i] = Instantiate(EnemyPrefab, EnemyParent);
-                m_enemyPool[i].SetActive(false);
-                m_enemyActive[i] = false;
+                m_enemyPoolDOD[i] = Instantiate(EnemyPrefabDOD, EnemyParentDOD);
+                m_enemyPoolDOD[i].SetActive(false);
+                m_enemyActiveDOD[i] = false;
             }
 
             m_enemyPoolOOP = new EnemyOOP[balance.MaxEnemies];
@@ -53,12 +53,12 @@ namespace Survivor
 
             for (int i = 0; i < balance.MaxEnemies; i++)
             {
-                m_enemyPool[i].transform.localPosition = gameData.EnemyPosition[i];
-                m_enemyPool[i].SetActive(i < gameData.EnemyCount);
-                m_enemyActive[i] = (i < gameData.EnemyCount);
+                m_enemyPoolDOD[i].transform.localPosition = gameData.EnemyPosition[i];
+                m_enemyPoolDOD[i].SetActive(i < gameData.EnemyCount);
+                m_enemyActiveDOD[i] = (i < gameData.EnemyCount);
             }
 
-            EnemyParent.gameObject.SetActive(true);
+            EnemyParentDOD.gameObject.SetActive(true);
             EnemyParentOOP.gameObject.SetActive(false);
 
             GameTimeText.text = "DOD " + gameData.EnemyCount.ToString("N0");
@@ -80,7 +80,7 @@ namespace Survivor
                 m_enemyPoolOOP[i].gameObject.SetActive(i < gameData.EnemyCount);
             }
 
-            EnemyParent.gameObject.SetActive(false);
+            EnemyParentDOD.gameObject.SetActive(false);
             EnemyParentOOP.gameObject.SetActive(true);
 
             GameTimeText.text = "OOP " + gameData.EnemyCount.ToString("N0");
@@ -92,12 +92,12 @@ namespace Survivor
         {
             for (int i = 0; i < balance.MaxEnemies; i++)
             {
-                m_enemyPool[i].SetActive(false);
+                m_enemyPoolDOD[i].SetActive(false);
                 m_enemyPoolOOP[i].gameObject.SetActive(false);
-                m_enemyActive[i] = false;
+                m_enemyActiveDOD[i] = false;
             }
 
-            EnemyParent.gameObject.SetActive(false);
+            EnemyParentDOD.gameObject.SetActive(false);
             EnemyParentOOP.gameObject.SetActive(false);
 
 
@@ -110,9 +110,9 @@ namespace Survivor
             Logic.TickDOD(gameData, balance, dt);
 
             for (int i = 0; i < gameData.EnemyCount; i++)
-                m_enemyPool[i].transform.localPosition = gameData.EnemyPosition[i];
+                m_enemyPoolDOD[i].transform.localPosition = gameData.EnemyPosition[i];
 
-            TryChangeEnemyCountDOD(gameData, balance, dt);
+            tryChangeEnemyCountDOD(gameData, balance, dt);
 
         }
 
@@ -120,10 +120,10 @@ namespace Survivor
         {
             Logic.CheckEnemyEnemyCollisionOOP(gameData, balance, m_enemyPoolOOP);
 
-            TryChangeEnemyCountOOP(gameData, balance, dt);
+            tryChangeEnemyCountOOP(gameData, balance, dt);
         }
 
-        void TryChangeEnemyCountDOD(GameData gameData, Balance balance, float dt)
+        void tryChangeEnemyCountDOD(GameData gameData, Balance balance, float dt)
         {
             int oldAliveCount;
             Logic.TryChangeEnemyCount(gameData, balance, dt, out oldAliveCount);
@@ -131,15 +131,15 @@ namespace Survivor
             if (oldAliveCount != gameData.EnemyCount)
             {
                 for (int i = 0; i < balance.MaxEnemies; i++)
-                    if (m_enemyActive[i] && i >= gameData.EnemyCount)
+                    if (m_enemyActiveDOD[i] && i >= gameData.EnemyCount)
                     {
-                        m_enemyPool[i].SetActive(false);
-                        m_enemyActive[i] = false;
+                        m_enemyPoolDOD[i].SetActive(false);
+                        m_enemyActiveDOD[i] = false;
                     }
-                    else if (!m_enemyActive[i] && i < gameData.EnemyCount)
+                    else if (!m_enemyActiveDOD[i] && i < gameData.EnemyCount)
                     {
-                        m_enemyPool[i].SetActive(true);
-                        m_enemyActive[i] = true;
+                        m_enemyPoolDOD[i].SetActive(true);
+                        m_enemyActiveDOD[i] = true;
                     }
 
 
@@ -147,7 +147,7 @@ namespace Survivor
             }
         }
 
-        void TryChangeEnemyCountOOP(GameData gameData, Balance balance, float dt)
+        void tryChangeEnemyCountOOP(GameData gameData, Balance balance, float dt)
         {
             int oldAliveCount;
             Logic.TryChangeEnemyCount(gameData, balance, dt, out oldAliveCount);

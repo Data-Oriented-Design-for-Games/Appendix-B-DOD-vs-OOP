@@ -12,17 +12,20 @@ namespace Survivor
             gameData.EnemyPosition = new Vector2[balance.MaxEnemies];
             gameData.EnemyDirection = new Vector2[balance.MaxEnemies];
 
+            gameData.EnemyCountGood = new int[balance.MaxEnemies];
+
             gameData.AverageDT = new float[10000];
         }
 
         public static void StartGame(GameData gameData, Balance balance, float cameraSize, float screenRatio)
         {
-            gameData.GameState = MENU_STATE.IN_GAME;
+            gameData.MenuState = MENU_STATE.IN_GAME;
 
             gameData.BoardBounds.y = cameraSize;
             gameData.BoardBounds.x = gameData.BoardBounds.y * screenRatio;
 
-            gameData.EnemyCount = gameData.SpawnRate = gameData.EnemyCountGood = 1;
+            gameData.EnemyCount = gameData.SpawnRate = 1;
+            gameData.EnemyCountGood[gameData.EnemyCountGoodCount++] = gameData.EnemyCount;
 
             for (int i = 0; i < balance.MaxEnemies; i++)
             {
@@ -65,7 +68,7 @@ namespace Survivor
 
                 if (avgFPS >= 59.0f || gameData.EnemyCount == 1)
                 {
-                    gameData.EnemyCountGood = gameData.EnemyCount;
+                    gameData.EnemyCountGood[gameData.EnemyCountGoodCount++] = gameData.EnemyCount;
 
                     gameData.SpawnRate *= 2;
 
@@ -73,16 +76,11 @@ namespace Survivor
                     if (gameData.EnemyCount > balance.MaxEnemies)
                         gameData.EnemyCount = balance.MaxEnemies;
                 }
-                else if (gameData.EnemyCount == gameData.EnemyCountGood && gameData.EnemyCount > 1)
-                {
-                    gameData.EnemyCount--;
-                    gameData.EnemyCountGood--;
-                    gameData.SpawnRate = 1;
-                }
-                else
+                else if (gameData.EnemyCountGoodCount > 1)
                 {
                     gameData.SpawnRate = 1;
-                    gameData.EnemyCount = gameData.EnemyCountGood;
+                    gameData.EnemyCountGoodCount--;
+                    gameData.EnemyCount = gameData.EnemyCountGood[gameData.EnemyCountGoodCount];
                 }
 
                 gameData.SpawnFrameCount = balance.SpawnFrameCount;
@@ -159,6 +157,11 @@ namespace Survivor
                 position.y = boardBounds.y;
                 direction.y = -direction.y;
             }
+        }
+
+        public static void ExitGame(GameData gameData)
+        {
+            gameData.MenuState = MENU_STATE.MAIN_MENU;
         }
     }
 }

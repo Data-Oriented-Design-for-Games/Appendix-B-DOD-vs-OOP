@@ -31,7 +31,6 @@ namespace Survivor
 
             UIMainMenu.SetActive(true);
             UIGameOver.SetActive(false);
-
         }
 
         public void StartGameDOD()
@@ -52,6 +51,7 @@ namespace Survivor
 
         public void ExitGame()
         {
+            Logic.ExitGame(m_gameData);
             Board.Hide(m_balance);
             UIMainMenu.SetActive(true);
         }
@@ -59,7 +59,7 @@ namespace Survivor
         // Update is called once per frame
         void Update()
         {
-            if (m_gameData.GameState == MENU_STATE.IN_GAME)
+            if (m_gameData.MenuState == MENU_STATE.IN_GAME)
                 if (DOD)
                     Board.TickDOD(m_gameData, m_balance, Time.deltaTime);
                 else

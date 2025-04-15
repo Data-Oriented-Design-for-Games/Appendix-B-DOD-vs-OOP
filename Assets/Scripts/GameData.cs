@@ -4,13 +4,14 @@ using UnityEngine;
 
 namespace Survivor
 {
-public enum MENU_STATE { NONE, IN_GAME, GAME_OVER };
+public enum MENU_STATE { MAIN_MENU, IN_GAME };
 
 [Serializable]
 public class GameData
 {
         public int EnemyCount;
-        public int EnemyCountGood;
+        public int[] EnemyCountGood;
+        public int EnemyCountGoodCount;
         public int SpawnRate;
         public int SpawnFrameCount;
 
@@ -22,6 +23,6 @@ public class GameData
 
         public Vector2 BoardBounds;
 
-        public MENU_STATE GameState = MENU_STATE.NONE;
+        public MENU_STATE MenuState = MENU_STATE.MAIN_MENU;
 }
 }
