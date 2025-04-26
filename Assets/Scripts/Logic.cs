@@ -66,7 +66,7 @@ namespace Survivor
 
                 gameData.AverageDTCount = 0;
 
-                if (avgFPS >= 59.0f || gameData.EnemyCount == 1)
+                if (avgFPS > 59.0f || gameData.EnemyCount == 1)
                 {
                     gameData.EnemyCountGood[gameData.EnemyCountGoodCount++] = gameData.EnemyCount;
 
@@ -125,7 +125,7 @@ namespace Survivor
 
         }
 
-        public static void CheckEnemyEnemyCollisionOOP(GameData gameData, Balance balance, EnemyOOP[] enemyPool)
+        public static void CheckEnemyEnemyCollisionOOP(GameData gameData, Balance balance, List<EnemyOOP> enemyPool)
         {
             float diameter = balance.Diameter;
             for (int i = 0; i < gameData.EnemyCount; i++)

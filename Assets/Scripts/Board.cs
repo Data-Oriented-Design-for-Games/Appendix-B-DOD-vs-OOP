@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using Unity.IL2CPP.CompilerServices;
+using Unity.VisualScripting;
 
 namespace Survivor
 {
@@ -16,7 +17,7 @@ namespace Survivor
 
         public GameObject EnemyPrefabOOP;
         public Transform EnemyParentOOP;
-        EnemyOOP[] m_enemyPoolOOP;
+        List<EnemyOOP> m_enemyPoolOOP;
 
         public GameObject UI;
         public TextMeshProUGUI GameTimeText;
@@ -33,10 +34,10 @@ namespace Survivor
                 m_enemyActiveDOD[i] = false;
             }
 
-            m_enemyPoolOOP = new EnemyOOP[balance.MaxEnemies];
+            m_enemyPoolOOP = new List<EnemyOOP>();
             for (int i = 0; i < balance.MaxEnemies; i++)
             {
-                m_enemyPoolOOP[i] = Instantiate(EnemyPrefabOOP, EnemyParentOOP).GetComponent<EnemyOOP>();
+                m_enemyPoolOOP.Add(Instantiate(EnemyPrefabOOP, EnemyParentOOP).GetComponent<EnemyOOP>());
                 m_enemyPoolOOP[i].gameObject.SetActive(false);
             }
 
