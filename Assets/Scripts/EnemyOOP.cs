@@ -26,12 +26,12 @@ namespace Survivor
             Vector2 position = transform.localPosition;
             position += Direction * Velocity * Time.deltaTime;
 
-            Logic.CheckEnemyWallCollision(m_boardBounds, ref position, ref Direction);
+            Logic.HandleEnemyWallCollision(m_boardBounds, ref position, ref Direction);
 
             transform.localPosition = position;
         }
 
-        public void CheckCollision(EnemyOOP enemyOOP, float diameter)
+        public void HandleCollision(EnemyOOP enemyOOP, float diameter)
         {
             float diameterSqr = diameter * diameter;
             if (Vector2.SqrMagnitude(transform.localPosition - enemyOOP.transform.localPosition) < diameterSqr)
@@ -43,7 +43,6 @@ namespace Survivor
                 Direction = (transform.localPosition - midPoint).normalized;
                 enemyOOP.Direction = (enemyOOP.transform.localPosition - midPoint).normalized;
             }
-
         }
     }
 }

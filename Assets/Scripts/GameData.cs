@@ -13,10 +13,10 @@ public class GameData
         public int[] EnemyCountGood;
         public int EnemyCountGoodCount;
         public int SpawnRate;
-        public int SpawnFrameCount;
+        public int FPSFrameCount;
 
-        public float[] AverageDT;
-        public int AverageDTCount;
+        public float[] DeltaTime;
+        public int DeltaTimeCount;
 
         public Vector2[] EnemyPosition;
         public Vector2[] EnemyDirection;

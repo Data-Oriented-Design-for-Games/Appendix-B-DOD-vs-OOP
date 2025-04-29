@@ -14,7 +14,7 @@ namespace Survivor
 
             gameData.EnemyCountGood = new int[balance.MaxEnemies];
 
-            gameData.AverageDT = new float[10000];
+            gameData.DeltaTime = new float[10000];
         }
 
         public static void StartGame(GameData gameData, Balance balance, float cameraSize, float screenRatio)
@@ -45,26 +45,26 @@ namespace Survivor
                     ).normalized;
             }
 
-            gameData.AverageDTCount = 0;
+            gameData.DeltaTimeCount = 0;
         }
 
         public static void TryChangeEnemyCount(GameData gameData, Balance balance, float dt, out int oldEnemyCount)
         {
             oldEnemyCount = gameData.EnemyCount;
 
-            gameData.AverageDT[gameData.AverageDTCount++] = dt;
+            gameData.DeltaTime[gameData.DeltaTimeCount++] = dt;
 
-            gameData.SpawnFrameCount--;
-            if (gameData.SpawnFrameCount <= 0)
+            gameData.FPSFrameCount--;
+            if (gameData.FPSFrameCount <= 0)
             {
                 float avgDT = 0.0f;
-                for (int i = 0; i < gameData.AverageDTCount; i++)
-                    avgDT += gameData.AverageDT[i];
-                avgDT /= (float)gameData.AverageDTCount;
+                for (int i = 0; i < gameData.DeltaTimeCount; i++)
+                    avgDT += gameData.DeltaTime[i];
+                avgDT /= (float)gameData.DeltaTimeCount;
 
                 float avgFPS = 1.0f / avgDT;
 
-                gameData.AverageDTCount = 0;
+                gameData.DeltaTimeCount = 0;
 
                 if (avgFPS > 59.0f || gameData.EnemyCount == 1)
                 {
@@ -83,7 +83,7 @@ namespace Survivor
                     gameData.EnemyCount = gameData.EnemyCountGood[gameData.EnemyCountGoodCount];
                 }
 
-                gameData.SpawnFrameCount = balance.SpawnFrameCount;
+                gameData.FPSFrameCount = balance.SpawnFrameCount;
             }
         }
 
@@ -96,16 +96,16 @@ namespace Survivor
                 balance.EnemyVelocity * dt;
                 Vector2 direction = gameData.EnemyDirection[i];
 
-                CheckEnemyWallCollision(gameData.BoardBounds, ref position, ref direction);
+                HandleEnemyWallCollision(gameData.BoardBounds, ref position, ref direction);
 
                 gameData.EnemyDirection[i] = direction;
                 gameData.EnemyPosition[i] = position;
             }
 
-            CheckEnemyEnemyCollisionDOD(gameData, balance);
+            HandleEnemyToEnemyCollisionDOD(gameData, balance);
         }
 
-        public static void CheckEnemyEnemyCollisionDOD(GameData gameData, Balance balance)
+        public static void HandleEnemyToEnemyCollisionDOD(GameData gameData, Balance balance)
         {
             float diameter = balance.Diameter;
             float diameterSqr = diameter * diameter;
@@ -125,17 +125,15 @@ namespace Survivor
 
         }
 
-        public static void CheckEnemyEnemyCollisionOOP(GameData gameData, Balance balance, List<EnemyOOP> enemyPool)
+        public static void HandleEnemyToEnemyCollisionOOP(GameData gameData, Balance balance, List<EnemyOOP> enemyPool)
         {
             float diameter = balance.Diameter;
             for (int i = 0; i < gameData.EnemyCount; i++)
                 for (int j = i + 1; j < gameData.EnemyCount; j++)
-                {
-                    enemyPool[i].CheckCollision(enemyPool[j], diameter);
-                }
+                    enemyPool[i].HandleCollision(enemyPool[j], diameter);
         }
 
-        public static void CheckEnemyWallCollision(Vector2 boardBounds, ref Vector2 position, ref Vector2 direction)
+        public static void HandleEnemyWallCollision(Vector2 boardBounds, ref Vector2 position, ref Vector2 direction)
         {
             if (position.x < -boardBounds.x)
             {

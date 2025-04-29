@@ -119,7 +119,7 @@ namespace Survivor
 
         public void TickOOP(GameData gameData, Balance balance, float dt)
         {
-            Logic.CheckEnemyEnemyCollisionOOP(gameData, balance, m_enemyPoolOOP);
+            Logic.HandleEnemyToEnemyCollisionOOP(gameData, balance, m_enemyPoolOOP);
 
             tryChangeEnemyCountOOP(gameData, balance, dt);
         }
